@@ -584,7 +584,7 @@ class GaussianDiffusion1D(nn.Module):
     @torch.no_grad()
     def p_sample_loop(self, shape):
         batch, device = shape[0], self.betas.device
-        intermediate = []
+        self.intermediate = []
         img = torch.randn(shape, device=device)
 
         x_start = None
@@ -592,10 +592,10 @@ class GaussianDiffusion1D(nn.Module):
         for t in tqdm(reversed(range(0, self.num_timesteps)), desc = 'sampling loop time step', total = self.num_timesteps):
             self_cond = x_start if self.self_condition else None
             img, x_start = self.p_sample(img, t, self_cond)
-            if (t % 10 == 0): intermediate.append(self.unnormalize(img)) 
+            if (t % 10 == 0): self.intermediate.append(self.unnormalize(img)) 
 
         img = self.unnormalize(img)
-        return img, intermediate
+        return img
 
     @torch.no_grad()
     def ddim_sample(self, shape, clip_denoised = True):
