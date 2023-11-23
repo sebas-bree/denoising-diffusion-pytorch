@@ -3,7 +3,7 @@ from inspect import isfunction
 from torch import nn, einsum
 from einops import rearrange
 
-from denoising_diffusion_pytorch.denoising_diffusion_pytorch import GaussianDiffusion
+from denoising_diffusion_pytorch_custom.denoising_diffusion_pytorch_custom import GaussianDiffusion
 
 # helper functions
 
