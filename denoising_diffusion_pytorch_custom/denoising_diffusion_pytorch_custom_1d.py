@@ -582,9 +582,9 @@ class GaussianDiffusion1D(nn.Module):
         return pred_img, x_start
 
     @torch.no_grad()
-    def p_sample_loop(self, shape, intermediate):
+    def p_sample_loop(self, shape):
         batch, device = shape[0], self.betas.device
-
+        intermediate = []
         img = torch.randn(shape, device=device)
 
         x_start = None
@@ -598,7 +598,7 @@ class GaussianDiffusion1D(nn.Module):
         return img, intermediate
 
     @torch.no_grad()
-    def ddim_sample(self, shape, intermediate, clip_denoised = True):
+    def ddim_sample(self, shape, clip_denoised = True):
         batch, device, total_timesteps, sampling_timesteps, eta, objective = shape[0], self.betas.device, self.num_timesteps, self.sampling_timesteps, self.ddim_sampling_eta, self.objective
 
         times = torch.linspace(-1, total_timesteps - 1, steps=sampling_timesteps + 1)   # [-1, 0, 1, 2, ..., T-1] when sampling_timesteps == total_timesteps
@@ -634,7 +634,7 @@ class GaussianDiffusion1D(nn.Module):
         return img
 
     @torch.no_grad()
-    def sample(self, intermediate, batch_size = 16):
+    def sample(self, batch_size = 16):
         seq_length, channels = self.seq_length, self.channels
         sample_fn = self.p_sample_loop if not self.is_ddim_sampling else self.ddim_sample
         return sample_fn((batch_size, channels, seq_length, intermediate))
