@@ -1,16 +1,16 @@
 from setuptools import setup, find_packages
 
-exec(open('denoising_diffusion_pytorch/version.py').read())
+exec(open('denoising_diffusion_pytorch_custom/version.py').read())
 
 setup(
-  name = 'denoising-diffusion-pytorch',
+  name = 'denoising-diffusion-pytorch-custom',
   packages = find_packages(),
   version = __version__,
   license='MIT',
   description = 'Denoising Diffusion Probabilistic Models - Pytorch',
-  author = 'Phil Wang',
-  author_email = 'lucidrains@gmail.com',
-  url = 'https://github.com/lucidrains/denoising-diffusion-pytorch',
+  author = 'Bas Bree',
+  author_email = 'sebas.bree@gmail.com',
+  url = 'https://github.com/sebas-bree/denoising-diffusion-pytorch-custom',
   long_description_content_type = 'text/markdown',
   keywords = [
     'artificial intelligence',
