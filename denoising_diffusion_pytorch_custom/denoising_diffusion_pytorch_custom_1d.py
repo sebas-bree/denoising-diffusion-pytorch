@@ -586,7 +586,7 @@ class GaussianDiffusion1D(nn.Module):
         batch, device = shape[0], self.betas.device
         self.intermediate = []
         if not timesteps is None and not img is None:
-            img = torch.from_numpy(img, device = device).reshape(shape)
+            img = torch.tensor(img, device = device).reshape(shape)
             desc = 'denoising loop time step'            
         else:
             timesteps = self.num_timesteps
