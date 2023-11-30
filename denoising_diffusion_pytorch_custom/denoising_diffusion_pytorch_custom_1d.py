@@ -585,12 +585,13 @@ class GaussianDiffusion1D(nn.Module):
     def p_sample_loop(self, shape, img = None, timesteps = None):
         batch, device = shape[0], self.betas.device
         self.intermediate = []
-        if img == None and timesteps == None:
+        if not timesteps is None and not img is None:
+            img = torch.from_numpy(img, device = device).reshape(shape)
+            desc = 'denoising loop time step'            
+        else:
             timesteps = self.num_timesteps
             img = torch.randn(shape, device=device)
             desc = 'sampling loop time step'
-        else:
-            desc = 'denoising loop time step'
 
         x_start = None
 
