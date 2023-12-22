@@ -422,7 +422,8 @@ class GaussianDiffusion1D(nn.Module):
         objective = 'pred_noise',
         beta_schedule = 'cosine',
         ddim_sampling_eta = 0.,
-        auto_normalize = True
+        auto_normalize = True,
+        snrcurve = None
     ):
         super().__init__()
         self.model = model
@@ -448,6 +449,7 @@ class GaussianDiffusion1D(nn.Module):
 
         timesteps, = betas.shape
         self.num_timesteps = int(timesteps)
+        self.snrcurve = snrcurve
 
         # sampling related parameters
 
@@ -653,15 +655,15 @@ class GaussianDiffusion1D(nn.Module):
 
     @torch.no_grad()
     def get_timestep(self, series, snrmetric, ax, incl_ratio):
-        if self.placeholder is None: self.placeholder = self.fillplaceholder(snrmetric)
+        if self.snrcurve is None: self.snrcurve = self.fillsnrcurve(snrmetric)
         ratio = snrmetric(torch.squeeze(series).cpu().numpy(), ax, incl_ratio)
         res = 0
-        for i in range(0,self.placeholder.length):
-            if math.fabs(ratio - self.placeholder[i]) <= math.fabs(ratio - self.placeholder[res]): res = i
+        for i in range(0,self.snrcurve.length):
+            if math.fabs(ratio - self.snrcurve[i]) <= math.fabs(ratio - self.snrcurve[res]): res = i
         return res
 
     @torch.no_grad()
-    def fillplaceholder(self, snrmetric):
+    def fillsnrcurve(self, snrmetric):
         _ = self.sample(batch_size = 50)
         y = torch.squeeze(torch.stack(self.intermediate))
         z = snrmetric(y.cpu().numpy(), ax = 2, incl_ratio = 0.25)
