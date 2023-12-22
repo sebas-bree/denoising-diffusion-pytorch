@@ -1,4 +1,5 @@
 import math
+import numpy as np
 from pathlib import Path
 from random import random
 from functools import partial
@@ -649,6 +650,23 @@ class GaussianDiffusion1D(nn.Module):
     def sample_from(self, img, timesteps, batch_size = 1):
         seq_length, channels = self.seq_length, self.channels
         return self.p_sample_loop((batch_size, channels, seq_length), img, timesteps)
+
+    @torch.no_grad()
+    def get_timestep(self, series, snrmetric, ax, incl_ratio):
+        if self.placeholder is None: self.placeholder = self.fillplaceholder(snrmetric)
+        ratio = snrmetric(torch.squeeze(series).cpu().numpy(), ax, incl_ratio)
+        res = 0
+        for i in range(0,self.placeholder.length):
+            if math.fabs(ratio - self.placeholder[i]) <= math.fabs(ratio - self.placeholder[res]): res = i
+        return res
+
+    @torch.no_grad()
+    def fillplaceholder(self, snrmetric):
+        _ = self.sample(batch_size = 50)
+        y = torch.squeeze(torch.stack(self.intermediate))
+        z = snrmetric(y.cpu().numpy(), ax = 2, incl_ratio = 0.25)
+        return np.mean(z, axis = 1)
+
 
     @torch.no_grad()
     def interpolate(self, x1, x2, t = None, lam = 0.5):
