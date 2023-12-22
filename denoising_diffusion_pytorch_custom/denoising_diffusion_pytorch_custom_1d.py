@@ -654,12 +654,11 @@ class GaussianDiffusion1D(nn.Module):
         return self.p_sample_loop((batch_size, channels, seq_length), img, timesteps)
 
     @torch.no_grad()
-    def get_timestep(self, series, snrmetric, ax, incl_ratio):
+    def get_timestep(self, series, snrmetric, incl_ratio):
         if self.snrcurve is None: self.snrcurve = self.fillsnrcurve(snrmetric)
-        print(self.snrcurve.shape)
-        ratio = np.squeeze(snrmetric(np.squeeze(series), ax, incl_ratio))
+        ratio = np.squeeze(snrmetric(np.squeeze(series), 0, incl_ratio))
         res = 0
-        for i in range(0,self.snrcurve.length):
+        for i in range(0,self.snrcurve.size):
             if np.abs(ratio - self.snrcurve[i]) <= np.abs(ratio - self.snrcurve[res]): res = i
         return res
 
