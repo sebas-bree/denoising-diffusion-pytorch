@@ -660,7 +660,7 @@ class GaussianDiffusion1D(nn.Module):
         res = 0
         for i in range(0,self.snrcurve.size):
             if np.abs(ratio - self.snrcurve[i]) <= np.abs(ratio - self.snrcurve[res]): res = i
-        return res
+        return self.num_timesteps - res
 
     @torch.no_grad()
     def fillsnrcurve(self, snrmetric, incl_ratio):
