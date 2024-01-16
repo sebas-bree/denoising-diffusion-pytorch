@@ -651,7 +651,7 @@ class GaussianDiffusion1D(nn.Module):
     @torch.no_grad()
     def sample_from(self, img, timesteps, batch_size = 1):
         seq_length, channels = self.seq_length, self.channels
-        return self.p_sample_loop((batch_size, channels, seq_length), img, timesteps)
+        return self.p_sample_loop((batch_size, channels, seq_length), self.normalize(img), timesteps)
 
     @torch.no_grad()
     def get_timestep(self, series, snrmetric, incl_ratio):
