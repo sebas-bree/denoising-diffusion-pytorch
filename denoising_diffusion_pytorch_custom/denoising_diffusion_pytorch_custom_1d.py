@@ -664,7 +664,7 @@ class GaussianDiffusion1D(nn.Module):
 
     @torch.no_grad()
     def fillsnrcurve(self, snrmetric, incl_ratio):
-        _ = self.sample(batch_size = 50)
+        _ = self.sample(batch_size = 1000)
         y = torch.squeeze(torch.stack(self.intermediate))
         z = snrmetric(y.cpu().numpy(), 2, incl_ratio)
         return np.squeeze(np.mean(z, axis = 1))
